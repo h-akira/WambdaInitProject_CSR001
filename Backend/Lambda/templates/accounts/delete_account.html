@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="card">
+    <div class="header">
+      <h1>アカウント削除</h1>
+      <p>WAMBDA CSR001 Sample Application</p>
+    </div>
+
+    <div class="warning-message">
+      <strong>⚠️ 注意</strong>
+      <p>この操作は取り消すことができません。アカウントを削除すると、すべてのデータが永続的に失われます。</p>
+    </div>
+
+    {% if error %}
+    <div class="error-message">
+      {{ error }}
+    </div>
+    {% endif %}
+
+    {% if message %}
+    <div class="success-message">
+      {{ message }}
+    </div>
+    {% endif %}
+
+    <form method="post">
+      <div class="form-group">
+        <label class="form-label">現在のパスワード</label>
+        {{ form.current_password(class="form-input", placeholder="現在のパスワードを入力") }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">削除の確認</label>
+        {{ form.confirmation(class="form-input", placeholder="削除を確認するため「DELETE」と入力") }}
+        <small style="color: #666; font-size: 12px;">「DELETE」と正確に入力してください</small>
+      </div>
+
+      <button type="submit" class="btn btn-danger">アカウントを削除</button>
+    </form>
+
+    <div class="links">
+      <a href="{{ reverse(master, 'accounts:profile') }}">アカウント情報に戻る</a>
+    </div>
+  </div>
+</div>
+
+<style>
+.warning-message {
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-left: 4px solid #fdcb6e;
+  color: #856404;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.warning-message strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.btn-danger {
+  background-color: #e74c3c;
+}
+
+.btn-danger:hover {
+  background-color: #c0392b;
+}
+</style>
+{% endblock %}

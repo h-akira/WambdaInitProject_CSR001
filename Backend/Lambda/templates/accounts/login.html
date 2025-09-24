@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="card">
+    <div class="header">
+      <h1>ログイン</h1>
+      <p>WAMBDA CSR001 Sample Application</p>
+    </div>
+
+    {% if error %}
+    <div class="error-message">
+      {{ error }}
+    </div>
+    {% endif %}
+
+    {% if message %}
+    <div class="success-message">
+      {{ message }}
+    </div>
+    {% endif %}
+
+    <form method="post">
+      <div class="form-group">
+        <label class="form-label">ユーザー名</label>
+        {{ form.username(class="form-input", placeholder="ユーザー名を入力") }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">パスワード</label>
+        {{ form.password(class="form-input", placeholder="パスワードを入力") }}
+      </div>
+
+      <button type="submit" class="btn">ログイン</button>
+    </form>
+
+    <div class="links">
+      <a href="{{ reverse(master, 'accounts:signup') }}">アカウント作成</a>
+      <a href="{{ reverse(master, 'accounts:forgot_password') }}">パスワードを忘れた場合</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

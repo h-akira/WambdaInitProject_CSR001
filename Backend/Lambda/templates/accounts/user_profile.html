@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="card">
+    <div class="header">
+      <h1>アカウント情報</h1>
+      <p>WAMBDA CSR001 Sample Application</p>
+    </div>
+
+    {% if error %}
+    <div class="error-message">
+      {{ error }}
+    </div>
+    {% endif %}
+
+    {% if message %}
+    <div class="success-message">
+      {{ message }}
+    </div>
+    {% endif %}
+
+    <div class="user-info">
+      <div class="form-group">
+        <label class="form-label">ユーザー名</label>
+        <div class="info-value">{{ username }}</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">ユーザー情報</label>
+        <div class="info-value">
+          {% if user_info %}
+            <pre>{{ user_info | tojson(indent=2) }}</pre>
+          {% else %}
+            認証情報なし
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <a href="{{ reverse(master, 'accounts:change_password') }}" class="btn" style="display: inline-block; text-align: center; text-decoration: none; margin-bottom: 10px;">パスワード変更</a>
+      <a href="{{ reverse(master, 'accounts:delete_account') }}" class="btn btn-danger" style="display: inline-block; text-align: center; text-decoration: none; background-color: #e74c3c;">アカウント削除</a>
+    </div>
+
+    <div class="links">
+      <a href="/">アプリに戻る</a>
+      <a href="{{ reverse(master, 'accounts:logout') }}">ログアウト</a>
+    </div>
+  </div>
+</div>
+
+<style>
+.info-value {
+  padding: 12px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  font-family: monospace;
+  color: #495057;
+}
+
+.action-buttons {
+  margin: 20px 0;
+}
+
+.btn-danger:hover {
+  background-color: #c0392b !important;
+}
+</style>
+{% endblock %}
