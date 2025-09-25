@@ -24,22 +24,31 @@ phases:
           echo "Triggered by GitHub webhook - checking for changes"
           WEBHOOK_TRIGGER=true
 
-          # Check for Backend changes
-          if git diff --name-only HEAD~1 HEAD | grep -q "^Backend/"; then
-            echo "Backend changes detected"
-            DEPLOY_BACKEND=true
-          else
-            echo "No Backend changes detected"
-            DEPLOY_BACKEND=false
-          fi
+          # Check if HEAD~1 exists (not initial commit)
+          if git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
+            echo "Checking changes since previous commit"
 
-          # Check for Frontend changes
-          if git diff --name-only HEAD~1 HEAD | grep -q "^Frontend/"; then
-            echo "Frontend changes detected"
-            DEPLOY_FRONTEND=true
+            # Check for Backend changes
+            if git diff --name-only HEAD~1 HEAD | grep -q "^Backend/"; then
+              echo "Backend changes detected"
+              DEPLOY_BACKEND=true
+            else
+              echo "No Backend changes detected"
+              DEPLOY_BACKEND=false
+            fi
+
+            # Check for Frontend changes
+            if git diff --name-only HEAD~1 HEAD | grep -q "^Frontend/"; then
+              echo "Frontend changes detected"
+              DEPLOY_FRONTEND=true
+            else
+              echo "No Frontend changes detected"
+              DEPLOY_FRONTEND=false
+            fi
           else
-            echo "No Frontend changes detected"
-            DEPLOY_FRONTEND=false
+            echo "Initial commit or HEAD~1 not available - deploying both"
+            DEPLOY_BACKEND=true
+            DEPLOY_FRONTEND=true
           fi
         else
           echo "Not triggered by GitHub webhook - deploying both Backend and Frontend"
@@ -47,8 +56,14 @@ phases:
           DEPLOY_BACKEND=true
           DEPLOY_FRONTEND=true
         fi
-      # Install Frontend dependencies
-      - cd Frontend && npm ci && cd ..
+      # Install Frontend dependencies if Frontend directory exists
+      - |
+        if [[ -d "Frontend" ]]; then
+          echo "Installing Frontend dependencies"
+          cd Frontend && npm ci && cd ..
+        else
+          echo "Frontend directory not found - skipping npm install"
+        fi
   build:
     commands:
       # Deploy Backend if needed
@@ -64,12 +79,12 @@ phases:
         fi
       # Deploy Frontend if needed
       - |
-        if [[ "$DEPLOY_FRONTEND" == "true" ]]; then
+        if [[ "$DEPLOY_FRONTEND" == "true" ]] && [[ -d "Frontend" ]]; then
           echo "Building and deploying Frontend..."
           # cd Frontend
           # npm run build
           # aws s3 sync dist/ s3://$S3_BUCKET/CloudFront/app --delete
           # cd ..
         else
-          echo "Skipping Frontend deployment"
+          echo "Skipping Frontend deployment (not needed or Frontend directory not found)"
         fi
