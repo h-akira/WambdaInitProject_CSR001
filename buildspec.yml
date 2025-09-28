@@ -24,6 +24,9 @@ phases:
           echo "Triggered by GitHub webhook - checking for changes"
           WEBHOOK_TRIGGER=true
 
+          # Fetch more git history for comparison
+          git fetch --depth=2 origin || true
+
           # Check if HEAD~1 exists (not initial commit)
           if git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
             echo "Checking changes since previous commit"

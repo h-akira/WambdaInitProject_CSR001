@@ -26,12 +26,12 @@ def login_view(master):
         password = form.password.data
         try:
             if login(master, username, password):
-                # Redirect to profile page or specified next URL
+                # Redirect to home page or specified next URL
                 next_url = master.request.query_params.get('next')
                 if next_url:
                     return redirect(master, next_url, no_reverse=True)
                 else:
-                    return redirect(master, 'accounts:profile')
+                    return redirect(master, '/', no_reverse=True)
             else:
                 context['error'] = 'ログインに失敗しました'
                 return render(master, 'accounts/login.html', context)
@@ -81,8 +81,8 @@ def logout_view(master):
         master.request.clean_cookie = True
         master.logger.debug("Forced cleanup after exception")
 
-    # Redirect to login page
-    return redirect(master, '/accounts/login', no_reverse=True)
+    # Redirect to home page
+    return redirect(master, '/', no_reverse=True)
 
 def verify_view(master):
     if master.request.method == 'POST':

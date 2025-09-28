@@ -6,7 +6,15 @@
         <div class="nav-links">
           <router-link to="/">Home</router-link>
           <router-link to="/protected">Protected</router-link>
-          <button @click="logout" class="logout-btn">Logout</button>
+          <template v-if="authStatus && authStatus.authenticated">
+            <a href="/accounts/profile" class="account-link">
+              <span class="user-icon">👤</span> {{ authStatus.username }}
+            </a>
+            <button @click="logout" class="logout-btn">Logout</button>
+          </template>
+          <template v-else>
+            <button @click="login" class="login-btn">Login</button>
+          </template>
         </div>
       </div>
     </nav>
@@ -20,9 +28,29 @@
 <script>
 export default {
   name: 'App',
+  data() {
+    return {
+      authStatus: null
+    }
+  },
+  async mounted() {
+    await this.checkAuthStatus()
+  },
   methods: {
+    async checkAuthStatus() {
+      try {
+        const response = await fetch('/accounts/status')
+        this.authStatus = await response.json()
+      } catch (error) {
+        console.error('Auth status check failed:', error)
+        this.authStatus = { authenticated: false }
+      }
+    },
     logout() {
       window.location.href = '/accounts/logout'
+    },
+    login() {
+      window.location.href = '/accounts/login'
     }
   }
 }
@@ -105,6 +133,39 @@ body {
 
 .logout-btn:hover {
   background-color: #c0392b;
+}
+
+.login-btn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.login-btn:hover {
+  background-color: #2980b9;
+}
+
+.account-link {
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.account-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.user-icon {
+  font-size: 1.2rem;
 }
 
 .main-content {
