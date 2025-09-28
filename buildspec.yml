@@ -81,10 +81,10 @@ phases:
       - |
         if [[ "$DEPLOY_FRONTEND" == "true" ]] && [[ -d "Frontend" ]]; then
           echo "Building and deploying Frontend..."
-          # cd Frontend
-          # npm run build
-          # aws s3 sync dist/ s3://$S3_BUCKET/CloudFront/app --delete
-          # cd ..
+          cd Frontend
+          npm run build
+          aws s3 sync dist/ s3://$S3_BUCKET/CloudFront/ --delete
+          cd ..
         else
           echo "Skipping Frontend deployment (not needed or Frontend directory not found)"
         fi

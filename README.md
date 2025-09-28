@@ -62,10 +62,9 @@ WambdaInitProject_CSR001/
 │   └── samconfig.toml
 ├── Frontend/                  # Vue.js フロントエンド
 │   ├── src/
-│   │   ├── main.js
+│   │   ├── main.js            # エントリーポイント + ルーティング
 │   │   ├── App.vue
-│   │   ├── views/             # ページコンポーネント
-│   │   └── router/            # ルーティング
+│   │   └── views/             # ページコンポーネント
 │   ├── package.json
 │   └── vite.config.js
 └── README.md
@@ -81,13 +80,13 @@ WambdaInitProject_CSR001/
 
 ### ページ構成
 
-- **Home (`/app/`)**: 認証状況表示、Hello World
-- **Protected (`/app/protected`)**: 認証必須、API呼び出しデモ
+- **Home (`/`)**: 認証状況表示、Hello World
+- **Protected (`/protected`)**: 認証必須、API呼び出しデモ
 - **Login (`/accounts/login`)**: サーバーサイドレンダリング
 
 ### API エンドポイント
 
-- `GET /api/auth/status` - 認証状況確認
+- `GET /accounts/status` - 認証状況確認
 - `GET /api/hello` - 認証が必要な Hello World API
 
 ## 開発環境セットアップ
@@ -180,7 +179,8 @@ cd Frontend
 npm run build
 
 # S3 にアップロード
-aws s3 sync dist/ s3://your-frontend-bucket/app/
+aws s3 sync dist/ s3://your-frontend-bucket/ --delete
+aws s3 cp dist/index.html s3://your-frontend-bucket/index.html --cache-control "no-cache, no-store, must-revalidate"
 ```
 
 ## 環境変数
@@ -200,7 +200,7 @@ aws s3 sync dist/ s3://your-frontend-bucket/app/
 
 ### 認証統合
 
-- フロントエンドは `/api/auth/status` で認証状況を確認
+- フロントエンドは `/accounts/status` で認証状況を確認
 - 未認証時は `/accounts/login` にリダイレクト
 - ログイン後は `?next` パラメータで元のページに戻る
 
@@ -219,10 +219,8 @@ Behaviors:
     TargetOrigin: "BackendAPIGateway"
   - PathPattern: "/api/*"
     TargetOrigin: "BackendAPIGateway"
-  - PathPattern: "/app/*"
+  - PathPattern: "/*"  # Default behavior
     TargetOrigin: "FrontendS3"
-  - PathPattern: "/"
-    TargetOrigin: "BackendAPIGateway"  # Redirect to /app/
 ```
 
 ## トラブルシューティング

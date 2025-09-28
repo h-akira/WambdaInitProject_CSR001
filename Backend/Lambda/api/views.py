@@ -1,18 +1,6 @@
 from wambda.shortcuts import json_response
 from datetime import datetime
 
-def auth_status(master):
-    """Return authentication status as JSON"""
-    is_authenticated = master.request.auth
-
-    response_data = {
-        'authenticated': is_authenticated,
-        'username': master.request.username if is_authenticated else None,
-        'timestamp': datetime.now().isoformat()
-    }
-
-    return json_response(master, response_data)
-
 def hello_api(master):
     """Protected Hello World API endpoint"""
     if not master.request.auth:

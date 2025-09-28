@@ -1,6 +1,7 @@
-from wambda.shortcuts import render, redirect
+from wambda.shortcuts import render, redirect, json_response
 from wambda.authenticate import login, signup, verify, change_password, forgot_password, confirm_forgot_password, MaintenanceOptionError
 from .forms import LoginForm, SignupForm, VerifyForm, ChangePasswordForm, ForgotPasswordForm, ResetPasswordForm, DeleteAccountForm
+from datetime import datetime
 
 def login_view(master):
     if master.request.method == 'POST':
@@ -304,3 +305,15 @@ def delete_account_view(master):
             return render(master, 'accounts/delete_account.html', context)
 
     return render(master, 'accounts/delete_account.html', context)
+
+def auth_status(master):
+    """Return authentication status as JSON"""
+    is_authenticated = master.request.auth
+
+    response_data = {
+        'authenticated': is_authenticated,
+        'username': master.request.username if is_authenticated else None,
+        'timestamp': datetime.now().isoformat()
+    }
+
+    return json_response(master, response_data)
