@@ -26,10 +26,10 @@ def login_view(master):
         password = form.password.data
         try:
             if login(master, username, password):
-                # Redirect to home page or specified next URL
+                # Redirect to home page with next parameter for Vue.js routing
                 next_url = master.request.query_params.get('next')
                 if next_url:
-                    return redirect(master, next_url, no_reverse=True)
+                    return redirect(master, '/', query_params={'next': next_url}, no_reverse=True)
                 else:
                     return redirect(master, '/', no_reverse=True)
             else:

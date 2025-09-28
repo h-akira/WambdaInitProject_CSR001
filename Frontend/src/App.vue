@@ -35,6 +35,7 @@ export default {
   },
   async mounted() {
     await this.checkAuthStatus()
+    this.handleRedirectAfterLogin()
   },
   methods: {
     async checkAuthStatus() {
@@ -51,6 +52,21 @@ export default {
     },
     login() {
       window.location.href = '/accounts/login'
+    },
+    handleRedirectAfterLogin() {
+      // Check if there's a 'next' parameter in the URL
+      const urlParams = new URLSearchParams(window.location.search)
+      const nextPath = urlParams.get('next')
+
+      if (nextPath && this.authStatus && this.authStatus.authenticated) {
+        // Remove the 'next' parameter from URL and navigate to the target path
+        const url = new URL(window.location)
+        url.searchParams.delete('next')
+        window.history.replaceState({}, '', url.pathname + url.search)
+
+        // Navigate to the target path using Vue Router
+        this.$router.push(nextPath)
+      }
     }
   }
 }
