@@ -49,7 +49,7 @@ export default {
   methods: {
     async checkAuthStatus() {
       try {
-        const response = await fetch('/api/auth/status')
+        const response = await fetch('/accounts/status')
         this.authStatus = await response.json()
       } catch (error) {
         console.error('Auth status check failed:', error)

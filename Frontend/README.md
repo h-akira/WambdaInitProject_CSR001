@@ -67,7 +67,7 @@ aws cloudfront create-invalidation --distribution-id [DISTRIBUTION_ID] --paths "
 
 ### 認証フロー
 
-1. 認証が必要なページアクセス時に `/api/auth/status` で認証状態確認
+1. 認証が必要なページアクセス時に `/accounts/status` で認証状態確認
 2. 未認証の場合は `/accounts/login` にリダイレクト
 3. 認証後は元のページに戻る
 
@@ -106,7 +106,7 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth) {
     try {
-      const response = await fetch('/api/auth/status')
+      const response = await fetch('/accounts/status')
       const data = await response.json()
 
       if (data.authenticated) {
