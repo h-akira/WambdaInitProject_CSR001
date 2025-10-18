@@ -24,6 +24,20 @@ class SignupForm(Form):
     validators.Length(min=8, max=63),
     validators.DataRequired()
   ])
+  confirm_password = PasswordField('Confirm Password', [
+    validators.Length(min=8, max=63),
+    validators.DataRequired()
+  ])
+
+  def validate(self):
+    if not super().validate():
+      return False
+
+    if self.password.data != self.confirm_password.data:
+      self.confirm_password.errors.append('パスワードが一致しません')
+      return False
+
+    return True
 
 class VerifyForm(Form):
   username = StringField(
